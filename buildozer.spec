@@ -9,9 +9,9 @@ source.include_exts = py
 
 version = 1.0
 
-requirements = python3,kivy
+requirements = python3,kivy==2.1.0
 
-android.archs = armeabi-v7a
+android.archs = arm64-v8a
 
 android.permissions = INTERNET
 
