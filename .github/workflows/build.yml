@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     
     steps:
     - name: Checkout code
@@ -18,49 +18,21 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
-    
-    - name: Cache Buildozer global directory
-      uses: actions/cache@v4
-      with:
-        path: ~/.buildozer
-        key: buildozer-${{ hashFiles('buildozer.spec') }}
-    
-    - name: Cache Buildozer directory
-      uses: actions/cache@v4
-      with:
-        path: .buildozer
-        key: buildozer-local-${{ hashFiles('buildozer.spec') }}
+        python-version: '3.9'
     
     - name: Install system dependencies
       run: |
         sudo apt update
-        sudo apt install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
+        sudo apt install -y git zip unzip openjdk-11-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
     
     - name: Install Python dependencies
       run: |
         pip install --upgrade pip
-        pip install buildozer==1.5.0 cython==0.29.36
-    
-    - name: Make buildozer executable
-      run: chmod +x $(which buildozer) || true
+        pip install buildozer==1.4.0 cython==0.29.33
     
     - name: Build APK with Buildozer
       run: |
-        yes | buildozer android debug || buildozer android debug
-      env:
-        ANDROID_SDK_ROOT: /opt/android-sdk
-        ANDROID_HOME: /opt/android-sdk
-    
-    - name: List build output
-      if: always()
-      run: |
-        echo "=== Build directory contents ==="
-        ls -la
-        echo "=== Bin directory contents ==="
-        ls -la bin/ || echo "No bin directory found"
-        echo "=== Buildozer directory ==="
-        ls -la .buildozer/ || echo "No .buildozer directory"
+        buildozer android debug
     
     - name: Upload APK
       if: success()
@@ -69,13 +41,3 @@ jobs:
         name: android-apk
         path: bin/*.apk
         if-no-files-found: error
-    
-    - name: Upload build logs
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-logs
-        path: |
-          .buildozer/android/platform/build-*/build.log
-          .buildozer/android/platform/build-*/logs/*
-        if-no-files-found: ignore
