@@ -1,23 +1,23 @@
 [app]
 
-title = TestApp
-package.name = testapp
-package.domain = com.test
+title = DouyinSessionID
+package.name = douyinsessionid
+package.domain = com.extractor
 
 source.dir = .
 source.include_exts = py
 
 version = 1.0
 
-requirements = python3,kivy==2.1.0
+requirements = python3,kivy
 
-android.archs = arm64-v8a
+android.archs = armeabi-v7a
 
 android.permissions = INTERNET
 
-android.api = 33
+android.api = 27
 android.minapi = 21
-android.ndk = 25b
+android.ndk = 19b
 
 orientation = portrait
 
