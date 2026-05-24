@@ -9,7 +9,7 @@ source.include_exts = py,png,jpg,kv,atlas
 
 version = 1.0
 
-requirements = python3,kivy==2.2.1,android,pyjnius
+requirements = python3,kivy==2.1.0,android,pyjnius
 
 android.archs = arm64-v8a
 
@@ -19,6 +19,8 @@ android.api = 33
 android.minapi = 21
 android.ndk = 25b
 android.accept_sdk_license = True
+android.skip_update = False
+android.logcat_filters = *:S python:D
 
 orientation = portrait
 fullscreen = 0
