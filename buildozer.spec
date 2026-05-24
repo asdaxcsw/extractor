@@ -15,9 +15,9 @@ android.archs = armeabi-v7a
 
 android.permissions = INTERNET
 
-android.api = 31
+android.api = 33
 android.minapi = 21
-android.ndk = 23b
+android.ndk = 25b
 
 orientation = portrait
 
