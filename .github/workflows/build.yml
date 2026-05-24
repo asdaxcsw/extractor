@@ -20,6 +20,18 @@ jobs:
       with:
         python-version: '3.10'
     
+    - name: Cache Buildozer global directory
+      uses: actions/cache@v4
+      with:
+        path: ~/.buildozer
+        key: buildozer-${{ hashFiles('buildozer.spec') }}
+    
+    - name: Cache Buildozer directory
+      uses: actions/cache@v4
+      with:
+        path: .buildozer
+        key: buildozer-local-${{ hashFiles('buildozer.spec') }}
+    
     - name: Install system dependencies
       run: |
         sudo apt update
@@ -28,15 +40,42 @@ jobs:
     - name: Install Python dependencies
       run: |
         pip install --upgrade pip
-        pip install buildozer cython
+        pip install buildozer==1.5.0 cython==0.29.36
+    
+    - name: Make buildozer executable
+      run: chmod +x $(which buildozer) || true
     
     - name: Build APK with Buildozer
       run: |
-        buildozer android debug
+        yes | buildozer android debug || buildozer android debug
+      env:
+        ANDROID_SDK_ROOT: /opt/android-sdk
+        ANDROID_HOME: /opt/android-sdk
+    
+    - name: List build output
+      if: always()
+      run: |
+        echo "=== Build directory contents ==="
+        ls -la
+        echo "=== Bin directory contents ==="
+        ls -la bin/ || echo "No bin directory found"
+        echo "=== Buildozer directory ==="
+        ls -la .buildozer/ || echo "No .buildozer directory"
     
     - name: Upload APK
+      if: success()
       uses: actions/upload-artifact@v4
       with:
         name: android-apk
         path: bin/*.apk
         if-no-files-found: error
+    
+    - name: Upload build logs
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-logs
+        path: |
+          .buildozer/android/platform/build-*/build.log
+          .buildozer/android/platform/build-*/logs/*
+        if-no-files-found: ignore
