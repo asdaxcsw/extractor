@@ -32,7 +32,10 @@ jobs:
     
     - name: Build APK with Buildozer
       run: |
-        buildozer android debug
+        yes | buildozer android debug
+      env:
+        ANDROID_SDK_ROOT: ${{ github.workspace }}/.buildozer/android/platform/android-sdk
+        ANDROID_HOME: ${{ github.workspace }}/.buildozer/android/platform/android-sdk
     
     - name: Upload APK
       if: success()
