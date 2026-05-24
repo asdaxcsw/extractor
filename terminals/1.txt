@@ -1,0 +1,6 @@
+---
+pid: 21424
+cwd: |
+  C:\Users\Administrator
+---
+PS C:\Users\Administrator> 

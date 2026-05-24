@@ -1,0 +1,141 @@
+========================================
+抖音SessionID提取器 - Windows构建指南
+========================================
+
+方法一：使用自动构建脚本（推荐）
+========================================
+
+1. 安装Docker Desktop
+   下载地址: https://www.docker.com/products/docker-desktop
+   安装后启动Docker Desktop
+
+2. 双击运行 build.bat
+   脚本会自动检查环境并开始构建
+
+3. 等待构建完成
+   首次构建需要30分钟-2小时
+   后续构建会快很多
+
+4. 在 bin 文件夹找到APK文件
+
+
+方法二：手动命令行构建
+========================================
+
+1. 安装Docker Desktop并启动
+
+2. 打开PowerShell，进入项目目录:
+   cd C:\Users\Administrator\.cursor\projects\empty-window
+
+3. 运行构建命令:
+   docker run --rm -v "%cd%":/home/user/hostcwd kivy/buildozer android debug
+
+4. 等待完成，APK在 bin 目录
+
+
+方法三：使用GitHub Actions在线构建
+========================================
+
+如果本地构建困难，可以使用GitHub自动构建:
+
+1. 将项目上传到GitHub
+
+2. 在项目根目录创建文件:
+   .github/workflows/build.yml
+
+3. 复制以下内容到文件中:
+
+---
+name: Build APK
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install buildozer cython
+        sudo apt update
+        sudo apt install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+    
+    - name: Build APK
+      run: buildozer android debug
+    
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: apk
+        path: bin/*.apk
+---
+
+4. 推送到GitHub后，在Actions标签页下载APK
+
+
+安装到手机
+========================================
+
+1. 将APK文件传输到Android设备
+   - 通过USB数据线
+   - 通过微信/QQ发送
+   - 通过云盘下载
+
+2. 在Android设备上:
+   - 打开"设置" > "安全"
+   - 启用"允许安装未知来源应用"
+
+3. 点击APK文件安装
+
+4. 打开应用:
+   - 点击"提取SessionID"
+   - 授予ROOT权限
+   - 查看提取结果
+   - 点击"复制到剪贴板"
+
+
+常见问题
+========================================
+
+Q: Docker构建失败怎么办?
+A: 检查:
+   - Docker Desktop是否正在运行
+   - 网络连接是否稳定
+   - 磁盘空间是否充足(至少10GB)
+
+Q: 构建时间太长?
+A: 首次构建需要下载大量依赖，这是正常的
+   后续构建会快很多(5-10分钟)
+
+Q: 应用无法获取sessionid?
+A: 确保:
+   - 设备已ROOT
+   - 已安装抖音应用
+   - 已登录抖音账号
+   - 授予了ROOT权限
+
+Q: 如何验证设备是否ROOT?
+A: 安装"Root Checker"应用检查
+
+
+技术支持
+========================================
+
+如遇到问题，请检查:
+1. BUILD_GUIDE.md - 详细构建指南
+2. README.md - 项目说明文档
+3. buildozer.spec - 构建配置文件
+
+
+========================================
+祝你构建顺利！
+========================================
